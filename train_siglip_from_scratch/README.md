@@ -9,8 +9,9 @@ SigLip
 5. download.py
 
 ## 参考资料
-1. 该项目代码主要参考：https://github.com/wyf3/llm_related/tree/main/train_siglip_from_scratch
-2. 该模型文献：https://arxiv.org/abs/2303.15343
+1. 主要参考项目：https://github.com/wyf3/llm_related/tree/main/train_siglip_from_scratch；
+2. 主要参考项目的up主讲解视频：https://www.bilibili.com/video/BV1i6kBYEELj/?spm_id_from=333.1387.search.video_card.click&vd_source=401f1f7d80fdd51bba1fc24cf7961ff9
+3. 该模型文献：https://arxiv.org/abs/2303.15343
 
 ## 主要修改内容
 1. 增加对应注释以及对应调整
