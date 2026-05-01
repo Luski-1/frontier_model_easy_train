@@ -5,7 +5,7 @@ SigLip
 1. train.py
 2. dataset.py
 3. model.py
-4. result/predict.ipynb
+4. result/result.jpg
 5. download.py
 6. result/data_example.md
 
