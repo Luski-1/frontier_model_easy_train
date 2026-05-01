@@ -7,6 +7,7 @@ SigLip
 3. model.py
 4. result/predict.ipynb
 5. download.py
+6. result/data_example.txt
 
 ## 参考资料
 1. 主要参考项目：https://github.com/wyf3/llm_related/tree/main/train_siglip_from_scratch；
