@@ -1,7 +1,7 @@
 # 项目
 SigLip
 
-## 项目架构
+## 代码文件
 1. train.py
 2. dataset.py
 3. model.py
