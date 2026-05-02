@@ -1,7 +1,7 @@
 # 项目
 LeWorldModel
 
-## 项目架构
+## 代码文件
 1. download.py
 2. train.py
 3. pusht.yaml (config/train/data/pusht.yaml)
