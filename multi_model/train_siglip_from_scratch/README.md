@@ -17,5 +17,8 @@ SigLip
 ## 主要修改内容
 1. 增加对应注释以及对应代码调整
 
-## 能否直接开启训练
-能
+## 该项目能否直接开启训练：能
+1. 提前下载roberta-large和dinov3-vitl16-pretrain-lvd1689m模型
+2. 下载数据：python3 download.py
+3. 开启训练：python3 train.py
+- PS：可能需要注意数据集保存/读取位置是否正确匹配
