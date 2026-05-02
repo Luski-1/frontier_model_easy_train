@@ -26,6 +26,7 @@ with h5py.File(HDF5_FILE_PATH, "r") as f:
 print("\n✅ 查看完成！仅展示元数据，未打印任何真实数据")
 ```
 2. 打印结果
+
 HDF5 文件: pusht_expert_train.h5
 ==================================================
 
