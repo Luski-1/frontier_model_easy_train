@@ -21,14 +21,14 @@ def download_raw_data():
     dataset_1000 = Dataset.from_list(list(subset))
 
     # 手动保存到磁盘
-    dataset_1000.save_to_disk('./')
+    dataset_1000.save_to_disk('/autodl-tmp/realsyn15m')
 
 
 # 2. -------------------- 转换数据 --------------------
 def transform_data():
     """准备数据：将Arrow转换为Parquet"""
     print("步骤1: 加载数据集...")
-    dataset = load_from_disk('./RealSyn15M')
+    dataset = load_from_disk('/autodl-tmp/realsyn15m')
     df = dataset.to_pandas()
 
     print(f"原始列名: {df.columns.tolist()}")
@@ -42,7 +42,7 @@ def transform_data():
         raise ValueError(f"❌ 'syn_text'列不存在！实际列: {url_df.columns.tolist()}")
 
     # 保存
-    output_path = './RealSyn15M/realsyn15m_urls.parquet'
+    output_path = '/autodl-tmp/realsyn15m_urls.parquet'
     url_df.to_parquet(output_path, index=False)
     print(f"✅ 转换成功，文件大小: {os.path.getsize(output_path) / 1024 / 1024:.2f} MB")
 
@@ -65,7 +65,7 @@ def download_images(parquet_path):
         url_col="URL",
         caption_col="syn_text",  # 主要保留的文本字段
         output_format="webdataset",
-        output_folder="C:/PythonData/realsyn15m_images",
+        output_folder="/autodl-tmp/realsyn15m_success_all",
         processes_count=8,
         thread_count=16,
         image_size=224,
@@ -90,4 +90,4 @@ if __name__ == '__main__':
     transform_data()
 
     # 下载图像
-    download_images('./RealSyn15M/realsyn15m_urls.parquet')
+    download_images('/autodl-tmp/realsyn15m_urls.parquet')
