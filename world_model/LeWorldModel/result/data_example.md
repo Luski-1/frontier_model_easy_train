@@ -26,8 +26,8 @@ with h5py.File(HDF5_FILE_PATH, "r") as f:
 print("\n✅ 查看完成！仅展示元数据，未打印任何真实数据")
 ```
 2. 打印结果
-
-HDF5 文件: pusht_expert_train.h5
+```text
+文件: pusht_expert_train.h5
 ==================================================
 
 字段名: action
@@ -69,3 +69,4 @@ HDF5 文件: pusht_expert_train.h5
    维度形状: (2336736,)
    数据类型: int64
    是否为数据集: True
+```
