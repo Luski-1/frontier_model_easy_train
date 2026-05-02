@@ -5,9 +5,9 @@ SigLip
 1. train.py
 2. dataset.py
 3. model.py
-4. result/predict_example.jpg
+4. result/predict_example.jpg  (训练6000step的结果展示)
 5. download.py
-6. result/data_example.md
+6. result/data_example.md      (训练数据的格式展示)
 
 ## 参考资料
 1. 主要参考项目：https://github.com/wyf3/llm_related/tree/main/train_siglip_from_scratch；
