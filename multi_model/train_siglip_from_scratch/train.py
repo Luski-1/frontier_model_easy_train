@@ -14,7 +14,7 @@ def train():
 
     # 2. 设置训练参数
     args = TrainingArguments(
-        output_dir='../autodl-fs/outputs',
+        output_dir='/autodl-fs/outputs',
         do_train=True,
         num_train_epochs=40,
         save_steps=2000,
@@ -46,7 +46,7 @@ def train():
     )
 
     # 3. 加载数据集
-    dataset = RealSynDataset(data_dir="../autodl-tmp/realsyn15m_success_all",
+    dataset = RealSynDataset(data_dir="/autodl-tmp/realsyn15m_success_all",
                              tokenizer=tokenizer,
                              processor=processor,
                              max_seq_length=64)
@@ -61,7 +61,7 @@ def train():
 
     # 5. 开启训练
     # trainer.train(resume_from_checkpoint=True)
-    # trainer.train(resume_from_checkpoint='../autodl-fs/outputs/checkpoint-10000')
+    # trainer.train(resume_from_checkpoint='/autodl-fs/outputs/checkpoint-10000')
     trainer.train(resume_from_checkpoint=False)
 
     # 6. 保存结果
