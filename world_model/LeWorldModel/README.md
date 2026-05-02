@@ -4,6 +4,7 @@ LeWorldModel
 ## 项目架构
 1. download.py
 2. train.py
+3. pusht.yaml (config/train/data/pusht.yaml)
 
 - PS：源项目的eval.py涉及gymnasium库，较复杂不做详细注释
 
