@@ -5,6 +5,7 @@ LeWorldModel
 1. download.py
 2. train.py
 3. pusht.yaml (config/train/data/pusht.yaml)
+4. dataset.py (stable_worldmodel/data/dataset.py，仅截取源项目所使用部分，非完整stable_worldmodel/data/dataset.py)
 
 - PS：源项目的eval.py涉及gymnasium库，较复杂不做详细注释
 
