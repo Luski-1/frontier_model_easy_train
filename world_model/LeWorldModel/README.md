@@ -10,9 +10,10 @@ LeWorldModel
 ## 参考资料
 1. 源项目：https://github.com/lucas-maes/le-wm
 2. 该模型文献：https://arxiv.org/pdf/2603.19312v1
-3. 源项目公开数据，可自行下载并且解压到指定目录或使用download.py
+3. 源项目公开数据：https://huggingface.co/collections/quentinll/lewm，可自行下载或使用download.py
 
 ## 主要修改内容
 1. 增加对应注释
 
-##
+## 该项目能否直接开启训练
+- 不能，该项目仅对源项目部分核心代码增加注释和参考文档，请使用源项目开展训练和推理
