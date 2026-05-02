@@ -1,0 +1,16 @@
+dataset:
+  # ${eval:'${wm.num_preds} + ${wm.history_size}'} 即 ${变量名}：引用配置中全局已定义的变量
+  # ${eval: '表达式'}：执行表达式计算（加减乘除都可以）
+  # 最终效果：num_steps = wm.预测步数 + wm.历史上下文步数
+  num_steps: ${eval:'${wm.num_preds} + ${wm.history_size}'}
+  frameskip: 5
+  name: pusht_expert_train
+  keys_to_load:
+    - pixels
+    - action
+    - proprio
+    - state
+  keys_to_cache:
+    - action
+    - proprio
+    - state
