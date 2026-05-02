@@ -143,7 +143,7 @@ if __name__ == "__main__":
 
     # 2. 加载数据集
     dataset = RealSynDataset(
-        data_dir="../autodl-tmp/realsyn15m_success_all",  # 数据目录
+        data_dir="/autodl-tmp/realsyn15m_success_all",  # 数据目录
         tokenizer=tokenizer,
         processor=processor,
         max_seq_length=64,  # 截断长度
