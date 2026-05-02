@@ -8,6 +8,7 @@ LeWorldModel
 4. dataset.py (stable_worldmodel/data/dataset.py，仅截取源项目所使用部分，非完整stable_worldmodel/data/dataset.py)
 5. utils.py
 6. transforms.py (stable_pretraining/data/transforms.py，仅截取源项目所使用部分，非完整stable_pretraining/data/transforms.py)
+7. module.py
 
 - PS：源项目的eval.py涉及gymnasium库，较复杂不做详细注释
 
