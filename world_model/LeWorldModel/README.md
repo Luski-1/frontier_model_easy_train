@@ -10,8 +10,7 @@ LeWorldModel
 ## 参考资料
 1. 源项目：https://github.com/lucas-maes/le-wm
 2. 该模型文献：https://arxiv.org/pdf/2603.19312v1
-3. 源项目公开数据：https://huggingface.co/collections/quentinll/lewm
-  - 可自行下载或使用download.py
+3. 源项目公开数据：https://huggingface.co/collections/quentinll/lewm       可自行下载或使用download.py
 
 ## 主要修改内容
 1. 增加对应注释
