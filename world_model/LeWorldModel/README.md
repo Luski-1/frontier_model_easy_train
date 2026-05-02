@@ -9,7 +9,10 @@ LeWorldModel
 5. utils.py
 6. transforms.py (stable_pretraining/data/transforms.py，仅截取源项目所使用部分，非完整stable_pretraining/data/transforms.py)
 7. module.py
-
+8. result/data_example.md (训练数据展示)
+9. ref/SIGReg代码.md
+10. ref/SIGReg理论.md
+11. ref/推理阶段.md (AI生成)
 - PS：源项目的eval.py涉及gymnasium库，较复杂不做详细注释
 
 ## 参考资料
