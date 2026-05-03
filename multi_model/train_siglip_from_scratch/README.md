@@ -2,6 +2,7 @@
 SigLip
 
 ## 代码文件
+```text
 train_siglip_from_scratch/
 ├── train.py
 ├── dataset.py
@@ -10,6 +11,7 @@ train_siglip_from_scratch/
 └── result/
     ├── predict_example.jpg (训练6000step的结果展示)
     └── data_example.md (训练数据的格式展示)
+```
 
 ## 参考资料
 1. 主要参考项目：https://github.com/wyf3/llm_related/tree/main/train_siglip_from_scratch；
