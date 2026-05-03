@@ -2,17 +2,30 @@
 LeWorldModel
 
 ## 代码文件
-1. download.py
-2. train.py
-3. pusht.yaml (config/train/data/pusht.yaml)
-4. dataset.py (stable_worldmodel/data/dataset.py，仅截取源项目所使用部分，非完整stable_worldmodel/data/dataset.py)
-5. utils.py
-6. transforms.py (stable_pretraining/data/transforms.py，仅截取源项目所使用部分，非完整stable_pretraining/data/transforms.py)
-7. module.py
-8. result/data_example.md (训练数据展示)
-9. ref/SIGReg代码.md
-10. ref/SIGReg理论.md
-11. ref/推理阶段.md (AI生成)
+``text
+# 项目文件结构
+LeWorldModel/
+├── download.py
+├── train.py
+├── config/
+│   └── train/
+│       └── data/
+│           └── pusht.yaml
+├── stable_worldmodel/
+│   └── data/
+│       └── dataset.py        (仅截取源项目所使用部分，非完整文件)
+├── stable_pretraining/
+│   └── data/
+│       └── transforms.py     (仅截取源项目所使用部分，非完整文件)
+├── utils.py
+├── module.py
+├── result/
+│   └── data_example.md       (训练数据展示)
+└── ref/
+    ├── SIGReg代码.md
+    ├── SIGReg理论.md
+    └── 推理阶段.md           (AI生成)
+```
 - PS：源项目的eval.py涉及gymnasium库，较复杂不做详细注释
 
 ## 参考资料
