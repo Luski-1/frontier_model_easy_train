@@ -2,7 +2,7 @@
 LeWorldModel
 
 ## 代码文件
-``text
+```text
 # 项目文件结构
 LeWorldModel/
 ├── download.py
