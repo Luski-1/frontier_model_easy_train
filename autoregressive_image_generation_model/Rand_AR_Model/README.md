@@ -10,13 +10,14 @@ Rand_AR_Model
    - 保留增加的对应注释
 3. mini_RandAR能否开启训练？
    - 可以开启训练，可使用train.sh
-```shell
+```text
 python new_train.py \
     --config new_configs/randar_xl_0.7b.yaml \
     --exp-name randar_xl_0.7b \
     --data-path /workspace/data/imagenet-llamagen-adm-256_codes \
     --vq-ckpt /workspace/model/vq_ds16_c2i.pt
 ```
+   - 参数解释
       - imagenet-llamagen-adm-256_codes是训练数据文件，可以参考原项目MD文档进行下载，也可以参考原项目extracr_latent_codes.py提取训练数据文件
       - vq_ds16_c2i.pt是tokenzier文件[VQ模型]，用于解码RandAR的预测图像ID，可以参考原项目MD文档进行下载
 
