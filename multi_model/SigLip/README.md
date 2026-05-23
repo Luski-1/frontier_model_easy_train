@@ -6,8 +6,9 @@ SigLip
 2. 增加训练数据下载以及查看的代码
 3. 能否开启训练
    - 可以
-     - 需要提前下载图像侧模型dinov3-vitl16-pretrain-lvd1689m
+     - 需要提前下载图像侧模型dinov3-vitl16-pretrain-lvd1689m和文本侧模型roberta-large
      - 需要提前下载数据 python3 download.py
+     - 修改train.py中8,9,49行的模型文件地址和训练数据文件地址
      - 训练命令 python3 train.py
 
 ## 代码文件
