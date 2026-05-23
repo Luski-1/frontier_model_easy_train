@@ -16,7 +16,7 @@ siglip/
 ├── dataset.py
 ├── model.py
 ├── download.py
-└── result/
+└── result/ [本人训练结果]
     ├── predict_example.jpg (训练6000step的结果展示)
     └── data_example.md (训练数据的格式展示)
 ```
