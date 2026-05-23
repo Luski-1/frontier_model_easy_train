@@ -29,6 +29,8 @@ Rand_AR_Model
 ```text
 Rand_AR_Model
 │
+│  README.md
+│
 ├─mini_RandAR [重写项目]
 │  │  new_dataset.py
 │  │  new_model.py
