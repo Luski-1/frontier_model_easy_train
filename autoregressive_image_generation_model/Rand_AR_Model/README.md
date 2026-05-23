@@ -5,7 +5,7 @@ Rand_AR_Model
 1. reference为原项目代码，本人对训练过程/推理过程的代码中增加方便理解的注释
 2. mini_RandAR为重写项目的精简化代码
    - 不修改原项目的核心思路的基础上，仅保留训练过程的默认分支路线以及推理方法
-   - 删除分布式，精简多个参数
+   - 删除分布式，删除benchmark评测相关内容，精简参数，精简日志打印
    - 相同模块内容的单py文件化
    - 保留增加的对应注释
 3. mini_RandAR能否开启训练？
@@ -18,9 +18,12 @@ Rand_AR_Model
           --vq-ckpt /workspace/model/vq_ds16_c2i.pt
       ```
    - 参数解释
-      - imagenet-llamagen-adm-256_codes是训练数据文件，可以参考原项目MD文档进行下载，也可以参考原项目extracr_latent_codes.py提取训练数据文件
+      - imagenet-llamagen-adm-256_codes是训练数据文件[ImageNet图像的离散化数据]，可以参考原项目MD文档进行下载，也可以参考原项目extracr_latent_codes.py对ImageNet图像进行离散化
       - vq_ds16_c2i.pt是tokenzier文件[VQ模型]，用于解码RandAR的预测图像ID，可以参考原项目MD文档进行下载
-
+        
+## 疑惑
+1. 不理解原项目为什么对Class token的旋转矩阵设置为零向量矩阵，class toekn embedding经过旋转后成为zero vector > Attention过程中后续image token的q与class toekn k的注意力分数永远都为0 > 永远无法获取class token的信息 > 无法实现CFG
+2. 个人愚见，可以在预计算旋转向量的函数precompute_freqs_cis_2d中，对class token对应的旋转矩阵设置为[0, 1]，即旋转0°的矩阵
 
 ## 代码文件
 ```text
