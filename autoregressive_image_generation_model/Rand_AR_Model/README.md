@@ -10,16 +10,17 @@ Rand_AR_Model
    - 保留增加的对应注释
 3. mini_RandAR能否开启训练？
    - 可以开启训练，可使用train.sh
-   - ```shell
+```shell
 python new_train.py \
     --config configs/randar_xl_0.7b.yaml \
     --exp-name randar_xl_0.7b \
     --data-path /workspace/data/imagenet-llamagen-adm-256_codes \
     --vq-ckpt /workspace/model/vq_ds16_c2i.pt
-    ```
+```
 
 
 ## 代码文件
+```text
 ├─mini_RandAR [重写项目]
 │  │  new_dataset.py
 │  │  new_model.py
@@ -97,6 +98,7 @@ python new_train.py \
             extracr_latent_codes.py
             resolution_extrapolation.py
             search_cfg_weights.py
+```
    
 ## 参考资料
 1. 原项目github：https://github.com/ziqipang/RandAR
