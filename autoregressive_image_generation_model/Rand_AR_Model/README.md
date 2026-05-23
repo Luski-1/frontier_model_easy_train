@@ -27,6 +27,8 @@ Rand_AR_Model
 
 ## 代码文件
 ```text
+Rand_AR_Model
+│
 ├─mini_RandAR [重写项目]
 │  │  new_dataset.py
 │  │  new_model.py
