@@ -1,0 +1,57 @@
+ar_model:
+  target: new_model.RandARTransformer
+  params:
+    n_layer: 36
+    n_head: 20
+    dim: 1280
+    model_type: c2i
+    vocab_size: 16384
+    block_size: 256 # latent_size ** 2
+    num_classes: 1000
+    cls_token_num: 1
+    resid_dropout_p: 0.1
+    ffn_dropout_p: 0.1
+    drop_path_rate: 0.0
+    token_dropout_p: 0.1
+    position_order: random # or scan
+    grad_checkpointing: True
+    zero_class_qk: True
+    num_inference_steps: 88
+
+tokenizer:
+  target: new_tokenizer.VQModel
+  params:
+    codebook_size: 16384
+    codebook_embed_dim: 8
+    codebook_l2_norm: True
+    commit_loss_beta: 0.25
+    entropy_loss_ratio: 0.0
+    encoder_ch_mult: [1, 1, 2, 2, 4]
+    decoder_ch_mult: [1, 1, 2, 2, 4]
+    z_channels: 256
+    dropout_p: 0.0
+
+gradient_accumulation_steps: 1
+
+optimizer:
+  # lr: 0.0004
+  lr: 0.0001
+  weight_decay: 0.05
+  beta1: 0.9
+  beta2: 0.95
+  max_grad_norm: 1.0
+  skip_grad_iter: 100
+  skip_grad_norm: 10
+
+lr_scheduler:
+  type: cosine
+  # warm_up_iters: 50000
+  warm_up_iters: 10000
+  min_lr_ratio: 0.05
+  num_cycles: 0.5
+
+# max_iters: 360000
+max_iters: 100000
+# global_batch_size: 1024
+global_batch_size: 256
+global_seed: 0
