@@ -23,7 +23,7 @@ Rand_AR_Model
         
 ## 疑惑
 1. 不理解原项目为什么对Class token的旋转矩阵设置为零向量矩阵，class toekn embedding经过旋转后成为zero vector > Attention过程中后续image token的q与class toekn k的注意力分数永远都为0 > 永远无法获取class token的信息 > 无法实现CFG
-2. 个人愚见，可以在预计算旋转向量的函数precompute_freqs_cis_2d中，对class token对应的旋转矩阵设置为[0, 1]，即旋转0°的矩阵
+2. 个人愚见：可以在预计算旋转向量的函数precompute_freqs_cis_2d中，对class token对应的旋转矩阵设置为[0, 1]，即旋转0°的矩阵，起码让后续image token可以从class token汲取信息
 
 ## 代码文件
 ```text
