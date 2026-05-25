@@ -16,9 +16,9 @@ SIGReg（Sketched Isotropic Gaussian Regularizer，绘制同向高斯正则化�
 $\varphi_X(t) = \mathbb{E}[e^{itX}]$
 其中：
 
-- $ i $ 是虚数单位（$ i^2 = -1 $）
+- $i$ 是虚数单位（ $i^2 = -1$ ）
 
-- $ t $ 是一个实数参数
+- $t$ 是一个实数参数
 
 - $ \mathbb{E}[\cdot] $ 表示数学期望
 
