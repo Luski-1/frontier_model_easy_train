@@ -476,7 +476,9 @@ err:
 
 **数学含义**：对所有 $t_k$ 采样点进行加权求和：
 
+
 $$\text{statistic}_{b,j} = \sum_{k=1}^{17} \text{err}_{b,j,k} \cdot w_k$$
+
 其中 $w_k$ 是 `self.weights` 中存储的值（频率t权重*积分离散步长）。
 
 **第 2 步**：`proj.size(-2)`
