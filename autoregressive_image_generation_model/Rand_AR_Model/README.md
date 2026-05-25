@@ -30,6 +30,7 @@ Rand_AR_Model
 Rand_AR_Model
 │
 │  README.md
+│  randar.md [原项目流程简要概括]
 │
 ├─mini_RandAR [重写项目]
 │  │  new_dataset.py
