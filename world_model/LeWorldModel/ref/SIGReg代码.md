@@ -222,7 +222,7 @@ class SIGReg(torch.nn.Module):
 
    在代码的 `forward` 方法中，我们计算：
    $\text{statistic} = (\text{err} @ \text{weights}) \times B = \sum_{k=1}^{K} \text{err}_k \cdot w_k \cdot B$
-   
+
    这实际上就是 Epps-Pulley 统计量的离散近似：
    $T \approx n \cdot \sum_{k=1}^{K} \left| \hat{\varphi}(t_k) - \varphi(t_k) \right|^2 \cdot dt_k \cdot e^{-t_k^2/2}$
    其中 $dt_k \cdot e^{-t_k^2/2}$ 就是代码中的 `weights * window`。
@@ -265,14 +265,14 @@ class SIGReg(torch.nn.Module):
 **代码含义**：计算投影后的值，并扩展维度以准备特征函数计算。
 **第 1 步**：`proj @ A`（矩阵乘法）
 
-- `proj` 形状：$(T, B, D)$
+- `proj` 形状： $(T, B, D)$
 
-- `A` 形状：$(D, 1024)$
+- `A` 形状： $(D, 1024)$
 
-- 矩阵乘法结果形状：$(T, B, 1024)$
+- 矩阵乘法结果形状： $(T, B, 1024)$
 
 **数学含义**：对于每个时间步和每个批量样本，计算 D 维特征在 1024 个随机方向上的投影。
-$\text{proj\_out}_{t,b,j} = \sum_{d=1}^{D} \text{proj}_{t,b,d} \cdot A_{d,j}$ 其中 $j = 1, \ldots, 1024$ 是投影索引。
+ $\text{proj\_out}_{t,b,j} = \sum_{d=1}^{D} \text{proj}_{t,b,d} \cdot A_{d,j}$ 其中 $j = 1, \ldots, 1024$ 是投影索引。
 
 **第 2 步**：`.unsqueeze(-1)`
 
@@ -284,10 +284,10 @@ $\text{proj\_out}_{t,b,j} = \sum_{d=1}^{D} \text{proj}_{t,b,d} \cdot A_{d,j}$ �
 
 - 广播后形状：(T, B, 1024, 17)
 
-- 计算：$x\_t = \text{proj\_out} \times t_k$ 
+- 计算： $x\_t = \text{proj\_out} \times t_k$ 
 
-**数学含义**：对每个投影值 x 和每个采样点 $t_k$，计算 $x \cdot t_k$。
-$\text{x\_t}_{t,b,j,k} = \text{proj\_out}_{t,b,j} \times t_k$ 
+**数学含义**：对每个投影值 x 和每个采样点 $t_k$，计算 $x \cdot t_k$。  
+ $\text{x\_t}_{t,b,j,k} = \text{proj\_out}_{t,b,j} \times t_k$ 
 
 **维度变化总结**：
 
@@ -340,11 +340,11 @@ x_t (T=2, B=1, num_proj=2, knots=3):
 **代码含义**：计算经验特征函数与理论特征函数之间的差异。**(计算模的平方而不是差的平方)**
 **第 1 部分**：`x_t.cos()`
 
-- 对 $x\_t$ 中的每个元素计算余弦：$\cos(x \cdot t)$，形状：$(T, B, 1024, 17)$
+- 对 $x\_t$ 中的每个元素计算余弦： $\cos(x \cdot t)$，形状： $(T, B, 1024, 17)$
 
 **第 2 部分**：`x_t.sin()`
 
-- 对 x\_t 中的每个元素计算正弦：$\sin(x \cdot t)$，形状：(T, B, 1024, 17)
+- 对 x\_t 中的每个元素计算正弦： $\sin(x \cdot t)$，形状：(T, B, 1024, 17)
 
 **第 3 部分**：`mean(-3)`
 
@@ -359,24 +359,26 @@ x_t (T=2, B=1, num_proj=2, knots=3):
 
 - `self.phi` 形状：(17,)，但会被广播到 (T, 1024, 17)
 
-- 计算：$\text{Real}(\hat{\varphi}(t_k)) - \varphi(t_k) = \frac{1}{B}\sum_{t=1}^{B} \cos(x_t \cdot t_k) - e^{-t_k^2/2}$
+- 计算： $\text{Real}(\hat{\varphi}(t_k)) - \varphi(t_k) = \frac{1}{B}\sum_{t=1}^{B} \cos(x_t \cdot t_k) - e^{-t_k^2/2}$
 
 **第 5 部分**：`.square()`
 
-- 计算差的平方：$[\text{Real}(\hat{\varphi}(t_k)) - \varphi(t_k)]^2$
+- 计算差的平方： $[\text{Real}(\hat{\varphi}(t_k)) - \varphi(t_k)]^2$
 
 **第 6 部分**：`+ x_t.sin().mean(-3).square()`
 
-- 这是虚部的平方：$[\text{Imag}(\hat{\varphi}(t_k))]^2 = \left[ \frac{1}{B}\sum_{j=1}^{B} \sin(x_t \cdot t_k) \right]^2$
+- 这是虚部的平方： $[\text{Imag}(\hat{\varphi}(t_k))]^2 = \left[ \frac{1}{B}\sum_{j=1}^{B} \sin(x_t \cdot t_k) \right]^2$
 
 **第 7 部分**：求和
 
 - $\text{err}_k = [\text{Real}(\hat{\varphi}(t_k)) - \varphi(t_k)]^2 + [\text{Imag}(\hat{\varphi}(t_k))]^2$
 
 **数学公式**：
-这就是 **Epps-Pulley 统计量**的核心：
+
+这就是 **Epps-Pulley 统计量**的核心： 
 $\text{err}_k = \left| \hat{\varphi}(t_k) - \varphi(t_k) \right|^2 = \left| \frac{1}{B}\sum_{j=1}^{B} e^{i x_j t_k} - e^{-t_k^2/2} \right|^2$
-展开为实部和虚部：
+
+展开为实部和虚部： 
 $\text{err}_k = \left( \frac{1}{B}\sum_{j=1}^{B} \cos(x_j t_k) - e^{-t_k^2/2} \right)^2 + \left( \frac{1}{B}\sum_{j=1}^{B} \sin(x_j t_k) \right)^2$
 
 **维度变化总结**：
