@@ -273,7 +273,7 @@ class SIGReg(torch.nn.Module):
 
 **数学含义**：对于每个时间步和每个批量样本，计算 D 维特征在 1024 个随机方向上的投影。
 
-$\text{proj\_out}_{t,b,j} = \sum_{d=1}^{D} \text{proj}_{t,b,d} \cdot A_{d,j}$ 其中 $j = 1, \ldots, 1024$ 是投影索引。
+$\text{proj_out}_{t,b,j} = \sum_{d=1}^{D} \text{proj}_{t,b,d} \cdot A_{d,j}$ 其中 $j = 1, \ldots, 1024$ 是投影索引。
 
 **第 2 步**：`.unsqueeze(-1)`
 
