@@ -219,8 +219,10 @@ class SIGReg(torch.nn.Module):
 3. `weights * window`：这是积分离散步长 $dt$ 与频率t权重的乘积
    ***数学解释**：
    $\text{weights} \times \text{window} = dt \cdot e^{-t_k^2/2}$
+
    在代码的 `forward` 方法中，我们计算：
    $\text{statistic} = (\text{err} @ \text{weights}) \times B = \sum_{k=1}^{K} \text{err}_k \cdot w_k \cdot B$
+   
    这实际上就是 Epps-Pulley 统计量的离散近似：
    $T \approx n \cdot \sum_{k=1}^{K} \left| \hat{\varphi}(t_k) - \varphi(t_k) \right|^2 \cdot dt_k \cdot e^{-t_k^2/2}$
    其中 $dt_k \cdot e^{-t_k^2/2}$ 就是代码中的 `weights * window`。
