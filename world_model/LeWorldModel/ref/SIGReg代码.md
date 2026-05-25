@@ -162,7 +162,7 @@ class SIGReg(torch.nn.Module):
 
 **梯形积分数学公式**：复合梯形法则的权重设置如下：
 
-$w_k = \begin{cases} \frac{dt}{2} &amp; \text{对于端点（首尾）} \\ \frac{dt}{2}  \cdot 2 = dt &amp; \text{对于内部点} \end{cases}$
+ $w_k = \begin{cases} \frac{dt}{2} &amp; \text{对于端点（首尾）} \\ \frac{dt}{2}  \cdot 2 = dt &amp; \text{对于内部点} \end{cases}$
 
 **具体计算示例**（当 `knots=17`, `dt=0.1875`）：
 
