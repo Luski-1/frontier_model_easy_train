@@ -160,9 +160,9 @@ class SIGReg(torch.nn.Module):
 
 **权重的作用**：在数值积分中，不同采样点的贡献需要乘以不同的权重。复合梯形法则的基本思想是用梯形面积近似曲线下面积。
 
-**梯形积分数学公式**：复合梯形法则的权重设置如下：
+**梯形积分数学公式**：复合梯形法则的权重设置如下
 
- $w_k = \begin{cases} \frac{dt}{2} &amp; \text{对于端点（首尾）} \\ \frac{dt}{2}  \cdot 2 = dt &amp; \text{对于内部点} \end{cases}$
+即 $w_k = \begin{cases} \frac{dt}{2} &amp; \text{对于端点（首尾）} \\ \frac{dt}{2}  \cdot 2 = dt &amp; \text{对于内部点} \end{cases}$
 
 **具体计算示例**（当 `knots=17`, `dt=0.1875`）：
 
