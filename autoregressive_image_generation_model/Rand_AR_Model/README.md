@@ -42,7 +42,7 @@ Rand_AR_Model
 │  └─new_configs
 │          randar_xl_0.7b.yaml
 │ 
-├─train_result [训练结果-100000 step]
+├─result [训练结果-100000 step]
 │  │  xxx.png
 │          
 └─reference [原项目]
