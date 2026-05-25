@@ -84,11 +84,3 @@ Step1: 输入[img₀, Query₁] → 预测1 token → img₁
 Step2: 输入[img₁, Query₂, Query₃] → 预测2 token → img₂,img₃
 ...  余弦调度逐步增加并行度，88步完成256 token
 ```
-
-   并行度公式：`num_tokens = (1 - cos(π/2 × step/total_steps)) × 256 + 1`，先慢后快
-
-5. **线性 CFG 调度**：系数从 cfg_start 到 cfg_end 线性变化（如 1.0→4.0），早期弱引导避免过度约束，后期强引导提升细节
-6. 恢复光栅顺序：`argsort(token_order)` 将随机顺序结果重排回 16×16 网格
-7. VQVAE 解码为图像，保存 PNG + 打包 NPZ（用于 FID 评估）
-
-推理脚本使用 DDP/torchrun（即使单 GPU），加载 `.safetensors` 格式权重。`num_inference_steps=88` 为并行解码，`-1` 或 `256` 为纯自回归逐 token 生成。
