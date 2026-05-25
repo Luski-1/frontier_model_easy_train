@@ -12,8 +12,8 @@ SIGReg（Sketched Isotropic Gaussian Regularizer，绘制同向高斯正则化�
 ### 1.1 什么是特征函数？
 
 在概率论中，**特征函数**是描述概率分布的一种数学工具。任何一个概率分布都可以用它对应的特征函数来唯一表示，这类似于每个人都有独特的指纹一样。
-**定义**：对于一个随机变量 $ X $，其特征函数 $ \varphi_X(t) $ 定义为：
-$ \varphi_X(t) = \mathbb{E}[e^{itX}] $
+**定义**：对于一个随机变量 $X$，其特征函数 $\varphi_X(t)$ 定义为：
+$\varphi_X(t) = \mathbb{E}[e^{itX}]$
 其中：
 
 - $ i $ 是虚数单位（$ i^2 = -1 $）
