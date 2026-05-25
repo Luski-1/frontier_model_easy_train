@@ -41,7 +41,7 @@ $$\varphi_X(t) = e^{-\frac{t^2}{2}}$$
 **定义**：给定样本 $x_1, x_2, \ldots, x_n$ 来自某个未知分布，经验特征函数定义为：
 $$\hat{\varphi}(t) = \frac{1}{n} \sum_{j=1}^{n} e^{itx_j}$$
 
-**几何解释**：这实际上是 n 个复数 $e^{itx_1}, e^{itx_2}, \ldots, e^{itx_n}$ 求平均。当 t = 0 时，$e^{i \cdot 0 \cdot x_j} = 1$，所以 $\hat{\varphi}(0) = 1$。
+**几何解释**：这实际上是 n 个复数 $e^{itx_1}, e^{itx_2}, \ldots, e^{itx_n}$ 求平均。当 t = 0 时， $e^{i \cdot 0 \cdot x_j} = 1$，所以 $\hat{\varphi}(0) = 1$。
 
 **直观理解**：可以把 $e^{itx}$ 看作一个单位圆上的旋转。不同的 x 值会导致不同的旋转角度，经验特征函数就是这些旋转的平均结果。当样本分布越接近理论分布时，经验特征函数就越接近理论特征函数。
 
@@ -101,8 +101,8 @@ $$\mathbf{X} \stackrel{d}{=} \mathbf{Y} \quad \Longleftrightarrow \quad \mathbf{
 $$f(\mathbf{x}) = \frac{1}{(2\pi)^{d/2}} \exp\left(-\frac{|\mathbf{x}|^2}{2}\right)$$
 
 **关键性质**：
-1. **均值向量为零**：$\mathbb{E}[\mathbf{X}] = \mathbf{0}$
-2. **协方差矩阵为单位矩阵**：$\text{Cov}(\mathbf{X}) = \mathbf{I}_d$
+1. **均值向量为零**： $\mathbb{E}[\mathbf{X}] = \mathbf{0}$
+2. **协方差矩阵为单位矩阵**： $\text{Cov}(\mathbf{X}) = \mathbf{I}_d$
 3. **各向同性**：在不同方向上方差相同
 
 **几何解释**：想象一个 d 维空间中的球面。同向高斯分布的样本点主要分布在这个球面的一个薄壳上，壳的半径约为 $\sqrt{d}$。
@@ -166,6 +166,7 @@ class SIGReg(torch.nn.Module):
 $$\int_a^b f(t) \, dt \approx \sum_{k=1}^{K} w_k \cdot f(t_k)$$
 
 其中：
+
 $$w_k = \begin{cases} 
 \frac{dt}{2} & \text{对于端点（首尾）} \\
 dt & \text{对于内部点} 
