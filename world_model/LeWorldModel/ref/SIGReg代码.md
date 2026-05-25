@@ -45,8 +45,8 @@ $\hat{\varphi}(t) = \frac{1}{n} \sum_{j=1}^{n} e^{itx_j}$
 **例子**：假设我们有三个样本点 $x_1 = 1, x_2 = 2, x_3 = 3$，要计算 $t = 0.5$ 时的经验特征函数：
 $\hat{\varphi}(0.5) = \frac{1}{3} \left( e^{i \cdot 0.5 \cdot 1} + e^{i \cdot 0.5 \cdot 2} + e^{i \cdot 0.5 \cdot 3} \right)$
 使用欧拉公式 $e^{ix} = \cos(x) + i\sin(x)$：
-
 $\hat{\varphi}(0.5) = \frac{1}{3} \left[ (\cos(0.5) + i\sin(0.5)) + (\cos(1.0) + i\sin(1.0)) + (\cos(1.5) + i\sin(1.5)) \right]$
+
 计算得：
 $\hat{\varphi}(0.5) = \frac{1}{3} \left[ (0.8776 + 0.4794i) + (0.5403 + 0.8415i) + (0.0707 + 0.9975i) \right]$
 
