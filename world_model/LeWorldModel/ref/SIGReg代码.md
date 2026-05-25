@@ -147,7 +147,7 @@ class SIGReg(torch.nn.Module):
 
 - 这相当于复合梯形法则（Composite Trapezoidal Rule）的步长
 
--  **为什么选择 0 到 3 这个范围？** 高斯分布的特征函数 $e^{-t^2/2}$ 在 $|t| &gt; 3$ 时已经非常接近零（约为 $e^{-4.5} \approx 0.011$），继续积分贡献很小。
+-  **为什么选择 0 到 3 这个范围？** 高斯分布的特征函数 $e^{-t^2/2}$ 在 $|t| &gt; 3$ 时已经非常接近零（约为 $e^{-4.5} \approx 0.011$ ），继续积分贡献很小。
 
 ---
 
@@ -162,7 +162,7 @@ class SIGReg(torch.nn.Module):
 
 **梯形积分数学公式**：复合梯形法则的权重设置如下
 
-即 $w_k = \begin{cases} \frac{dt}{2} &amp; \text{对于端点（首尾）} \\ \frac{dt}{2}  \cdot 2 = dt &amp; \text{对于内部点} \end{cases}$
+ $$w_k = \begin{cases} \frac{dt}{2} &amp; \text{对于端点（首尾）} \\ \frac{dt}{2}  \cdot 2 = dt &amp; \text{对于内部点} \end{cases}$$
 
 **具体计算示例**（当 `knots=17`, `dt=0.1875`）：
 
