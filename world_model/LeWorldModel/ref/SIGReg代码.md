@@ -272,7 +272,8 @@ class SIGReg(torch.nn.Module):
 - 矩阵乘法结果形状： $(T, B, 1024)$
 
 **数学含义**：对于每个时间步和每个批量样本，计算 D 维特征在 1024 个随机方向上的投影。
- $\text{proj\_out}_{t,b,j} = \sum_{d=1}^{D} \text{proj}_{t,b,d} \cdot A_{d,j}$ 其中 $j = 1, \ldots, 1024$ 是投影索引。
+
+$\text{proj\_out}_{t,b,j} = \sum_{d=1}^{D} \text{proj}_{t,b,d} \cdot A_{d,j}$ 其中 $j = 1, \ldots, 1024$ 是投影索引。
 
 **第 2 步**：`.unsqueeze(-1)`
 
@@ -287,7 +288,7 @@ class SIGReg(torch.nn.Module):
 - 计算： $x\_t = \text{proj\_out} \times t_k$ 
 
 **数学含义**：对每个投影值 x 和每个采样点 $t_k$，计算 $x \cdot t_k$。  
- $\text{x\_t}_{t,b,j,k} = \text{proj\_out}_{t,b,j} \times t_k$ 
+$$\text{x\_t}_{t,b,j,k} = \text{proj\_out}_{t,b,j} \times t_k$$
 
 **维度变化总结**：
 
