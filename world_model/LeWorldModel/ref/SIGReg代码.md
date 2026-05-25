@@ -295,7 +295,7 @@ $$\text{proj\_out}_{t,b,j} = \sum_{d=1}^{D} \text{proj}_{t,b,d} \cdot A_{d,j}$$
 
 **数学含义**：对每个投影值 x 和每个采样点 $t_k$，计算 $x \cdot t_k$。
 
-$$\text{x_t}_{t,b,j,k} = \text{projout}_{t,b,j} \times t_k$$
+$$x_{t,b,j,k} = \text{projout}_{t,b,j} \times t_k$$
 
 **维度变化总结**：
 
