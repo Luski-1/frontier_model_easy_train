@@ -276,11 +276,12 @@ $$T \approx n \cdot \sum_{k=1}^{K} \left| \hat{\varphi}(t_k) - \varphi(t_k) \rig
 **代码含义**：计算投影后的值，并扩展维度以准备特征函数计算。
 
 **第 1 步**：`proj @ A`（矩阵乘法）
-- `proj` 形状：$(T, B, D)$
-- `A` 形状：$(D, 1024)$
-- 矩阵乘法结果形状：$(T, B, 1024)$
+- `proj` 形状： $(T, B, D)$
+- `A` 形状： $(D, 1024)$
+- 矩阵乘法结果形状： $(T, B, 1024)$
 
 **数学含义**：对于每个时间步和每个批量样本，计算 D 维特征在 1024 个随机方向上的投影。
+
 $$\text{proj\_out}_{t,b,j} = \sum_{d=1}^{D} \text{proj}_{t,b,d} \cdot A_{d,j}$$
 其中 $j = 1, \ldots, 1024$ 是投影索引。
 
@@ -290,9 +291,10 @@ $$\text{proj\_out}_{t,b,j} = \sum_{d=1}^{D} \text{proj}_{t,b,d} \cdot A_{d,j}$$
 **第 3 步**：`* self.t`
 - `self.t` 形状：(17,)
 - 广播后形状：(T, B, 1024, 17)
-- 计算：$x\_t = \text{proj\_out} \times t_k$
+- 计算： $x\_t = \text{proj\_out} \times t_k$
 
 **数学含义**：对每个投影值 x 和每个采样点 $t_k$，计算 $x \cdot t_k$。
+
 $$\text{x\_t}_{t,b,j,k} = \text{proj\_out}_{t,b,j} \times t_k$$
 
 **维度变化总结**：
@@ -346,10 +348,10 @@ x_t (T=2, B=1, num_proj=2, knots=3):
 **代码含义**：计算经验特征函数与理论特征函数之间的差异。**(计算模的平方而不是差的平方)**
 
 **第 1 部分**：`x_t.cos()`
-- 对 $x\_t$ 中的每个元素计算余弦：$\cos(x \cdot t)$，形状：$(T, B, 1024, 17)$
+- 对 $x\_t$ 中的每个元素计算余弦： $\cos(x \cdot t)$，形状： $(T, B, 1024, 17)$
 
 **第 2 部分**：`x_t.sin()`
-- 对 x_t 中的每个元素计算正弦：$\sin(x \cdot t)$，形状：(T, B, 1024, 17)
+- 对 x_t 中的每个元素计算正弦： $\sin(x \cdot t)$，形状： (T, B, 1024, 17)
 
 **第 3 部分**：`mean(-3)`
 - 对第 3 个维度（从后数，即 B 维度）求平均，形状从 $(T, B, 1024, 17)$ 变为 $(T, 1024, 17)$
@@ -362,22 +364,24 @@ $$\hat{\varphi}(t) = \frac{1}{n} \sum_{j=1}^{n} e^{itx_j} = \frac{1}{n} \sum_{j=
 
 **第 4 部分**：`.mean(-3) - self.phi`
 - `self.phi` 形状：(17,)，但会被广播到 (T, 1024, 17)
-- 计算：$\text{Real}(\hat{\varphi}(t_k)) - \varphi(t_k) = \frac{1}{B}\sum_{t=1}^{B} \cos(x_t \cdot t_k) - e^{-t_k^2/2}$
+- 计算： $\text{Real}(\hat{\varphi}(t_k)) - \varphi(t_k) = \frac{1}{B}\sum_{t=1}^{B} \cos(x_t \cdot t_k) - e^{-t_k^2/2}$
 
 **第 5 部分**：`.square()`
-- 计算差的平方：$[\text{Real}(\hat{\varphi}(t_k)) - \varphi(t_k)]^2$
+- 计算差的平方： $[\text{Real}(\hat{\varphi}(t_k)) - \varphi(t_k)]^2$
 
 **第 6 部分**：`+ x_t.sin().mean(-3).square()`
-- 这是虚部的平方：$[\text{Imag}(\hat{\varphi}(t_k))]^2 = \left[ \frac{1}{B}\sum_{t=1}^{B} \sin(x_t \cdot t_k) \right]^2$
+- 这是虚部的平方： $[\text{Imag}(\hat{\varphi}(t_k))]^2 = \left[ \frac{1}{B}\sum_{t=1}^{B} \sin(x_t \cdot t_k) \right]^2$
 
 **第 7 部分**：求和
 $$\text{err}_k = [\text{Real}(\hat{\varphi}(t_k)) - \varphi(t_k)]^2 + [\text{Imag}(\hat{\varphi}(t_k))]^2$$
 
 **数学公式**：
 这就是 **Epps-Pulley 统计量** 的核心：
+
 $$\text{err}_k = \left| \hat{\varphi}(t_k) - \varphi(t_k) \right|^2 = \left| \frac{1}{B}\sum_{j=1}^{B} e^{i x_j t_k} - e^{-t_k^2/2} \right|^2$$
 
 展开为实部和虚部：
+
 $$\text{err}_k = \left( \frac{1}{B}\sum_{j=1}^{B} \cos(x_j t_k) - e^{-t_k^2/2} \right)^2 + \left( \frac{1}{B}\sum_{j=1}^{B} \sin(x_j t_k) \right)^2$$
 
 **维度变化总结**：
@@ -466,11 +470,12 @@ err:
 **代码含义**：对所有采样点加权求和，得到 Epps-Pulley 统计量。
 
 **第 1 步**：`err @ self.weights`
-- `err` 形状：$(T, 1024, 17)$
-- `self.weights` 形状：$(17,)$
-- 结果形状：$(T, 1024)$
+- `err` 形状： $(T, 1024, 17)$
+- `self.weights` 形状： $(17,)$
+- 结果形状： $(T, 1024)$
 
 **数学含义**：对所有 $t_k$ 采样点进行加权求和：
+
 $$\text{statistic}_{b,j} = \sum_{k=1}^{17} \text{err}_{b,j,k} \cdot w_k$$
 其中 $w_k$ 是 `self.weights` 中存储的值（频率t权重*积分离散步长）。
 
@@ -479,6 +484,7 @@ $$\text{statistic}_{b,j} = \sum_{k=1}^{17} \text{err}_{b,j,k} \cdot w_k$$
 - 这就是公式中的 $n$，即样本数量
 
 **第 3 步**：乘法
+
 $$\text{statistic}_{b,j} = B \cdot \sum_{k=1}^{17} \text{err}_{b,j,k} \cdot w_k$$
 
 **完整的 Epps-Pulley 统计量**：
@@ -562,6 +568,7 @@ statistic: (T, num_proj)
 #### 完整的加权积分公式
 
 当前代码实现的是：
+
 $$T_n = n \cdot \int_{-\infty}^{+\infty} \left| \hat{\varphi}(t) - \varphi(t) \right|^2 \cdot \underbrace{e^{-t^2/2}}_{\text{权重}} \cdot \underbrace{dt}_{\text{积分}}$$
 
 其中权重函数 $e^{-t^2/2}$ 具有双重身份：
@@ -626,6 +633,7 @@ $$t = [0.0, 0.1875, 0.3750, 0.5625, \ldots, 3.0]$$
 想象我们要计算曲线 $f(t) = | \hat{\varphi}(t) - \varphi(t) |^2 \cdot e^{-t^2/2}$ 下的面积
 
 梯形面积法的思想：用梯形近似每个小区间的曲线下面积：
+
 $$\text{面积} \approx \sum_{k=1}^{16} \text{梯形}_k = \sum_{k=1}^{16} \frac{f(t_{k-1}) + f(t_k)}{2} \cdot \Delta t$$
 
 展开后得到：
@@ -634,5 +642,3 @@ $$\text{面积} = \frac{\Delta t}{2} \cdot f(t_0) + \Delta t \cdot \sum_{k=1}^{1
 这正是代码中设置端点权重为 $\frac{dt}{2}$、内部点权重为 $dt$ 的原因！
 
 ---
-
-需要我帮你添加一个**完整可运行的PyTorch示例代码**，展示如何在实际训练中使用这个SIGReg正则化器吗？
