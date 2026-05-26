@@ -115,4 +115,5 @@ Rand_AR_Model
 ## 参考资料
 1. 原项目github：https://github.com/ziqipang/RandAR
 2. 原项目文献：https://arxiv.org/abs/2412.01827
+3. RAND_AR模型理论讲解视频的推荐👍：https://www.bilibili.com/video/BV1KUopYZEgE/?spm_id_from=333.1387.search.video_card.click
 
