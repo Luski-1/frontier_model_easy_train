@@ -1,0 +1,49 @@
+# ---- 随机种子 ----
+seed: 3072
+
+# ---- 训练超参 ----
+max_epochs: 100
+batch_size: 128
+num_workers: 6
+train_split: 0.9          # 训练集占比
+img_size: 224
+precision: bf16            # bf16 混合精度，或 fp32
+gradient_clip_val: 1.0
+device: cuda
+
+# ---- 数据配置 ----
+h5_path: "/workspace/data/lewm_dir/datasets/pusht_expert_train.h5"
+frameskip: 5              # 每5帧抽1步
+history_size: 3           # 上下文步数（ctx_len）
+num_preds: 1              # 预测步数
+keys_to_load: ['pixels', 'action']  # 需要加载的数据字段
+keys_to_cache: ['action']           # 需要缓存的数据字段
+
+# ---- 模型配置 ----
+embed_dim: 192
+encoder_size: tiny         # ViT-SM/Tiny/Base/Large
+encoder_patch_size: 14
+encoder_pretrained: false
+predictor_depth: 6
+predictor_heads: 16
+predictor_mlp_dim: 2048
+predictor_dim_head: 64
+predictor_dropout: 0.1
+predictor_emb_dropout: 0
+
+# ---- 损失配置 ----
+sigreg_weight: 0.09        # SIGReg 正则权重 lambda
+sigreg_knots: 17
+sigreg_num_proj: 1024
+
+# ---- 优化器配置 ----
+optimizer: AdamW
+lr: 5e-5
+weight_decay: 1e-3
+scheduler: LinearWarmupCosineAnnealingLR
+warmup: 0.01
+
+# ---- 输出配置 ----
+output_dir: "/workspace/model"
+output_model_name: lewm
+save_every: 1              # 每 N epoch 保存一次

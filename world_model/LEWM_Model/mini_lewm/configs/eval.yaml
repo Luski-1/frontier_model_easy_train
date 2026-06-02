@@ -1,0 +1,62 @@
+# ---- 随机种子 ----
+seed: 42
+
+# ---- 模型 ----
+# policy_path: checkpoint 目录路径，load_model() 在此读取 config.json + weights.pt
+policy: "lewm"
+policy_path: "/workspace/model/lewm/epoch_20"
+
+# ---- 数据缓存目录----
+cache_dir: "/workspace/data/lewm_dir" # 默认添加/dataset
+
+# ---- World 环境 ----
+world:
+  env_name: swm/PushT-v1
+  max_episode_steps: 100   # >= eval_budget
+  image_shape: [224, 224]
+
+# ---- 规划配置 ----
+plan_config:
+  horizon: 5                # 每次规划往前看 5 步
+  receding_horizon: 5      # 执行 5 步后重新规划
+  action_block: 5          # frameskip=5，每个动作重复 5 次
+
+# ---- CEM 求解器 ----
+# 预测轮数 * 每一轮的行动数 <= 预测预算
+# horizon(5) * action_block(5) = 25 <= eval_budget(50) → 2 轮 rollout
+solver:
+  num_samples: 300         # 每轮采样的候选动作序列数
+  var_scale: 1.0           # 初始方差缩放
+  n_steps: 30              # CEM 内循环迭代次数
+  topk: 30                 # 每轮保留的精英候选数
+
+# ---- 评估配置 ----
+eval:
+  num_eval: 50             # 评估的回合数
+  goal_offset_steps: 25    # 目标帧在起始帧后多少步
+  eval_budget: 50          # 每回合最多执行步数
+  img_size: 224            # 图像尺寸
+  dataset_name: pusht_expert_train
+  callables:
+    # -- set state
+    - method: _set_state
+      args:
+        state:
+          value: state
+    # -- set goal state
+    - method: _set_goal_state
+      args:
+        goal_state:
+          value: goal_state
+
+# ---- 数据集 ----
+dataset:
+  keys_to_cache:
+    - action
+    - proprio
+    - state
+
+# ---- 输出 ----
+output:
+  results_dir: "/workspace/mini_lewm/eval_results"   # 视频和结果文件保存目录
+  filename: pusht_results.txt
