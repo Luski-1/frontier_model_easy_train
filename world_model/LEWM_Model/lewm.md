@@ -114,22 +114,3 @@ CEM 关键超参（来自 `config/eval/solver/cem.yaml`）：
 | | sigreg_weight | 0.09 | SIGReg 正则化权重 λ |
 | **精度** | precision | bf16 | 混合精度训练 |
 
----
-
-## 使用方法
-
-### 训练
-```bash
-cd C:\Users\vincentliang1\Desktop\le-wm-main
-python mini_lewm/train.py
-```
-
-### 评估
-```bash
-cd C:\Users\vincentliang1\Desktop\le-wm-main
-python mini_lewm/eval.py
-```
-
-评估前需修改 `mini_lewm/configs/eval.yaml` 中的 `policy` 路径，指向训练保存的 checkpoint 目录。
-
-依赖说明：`mini_lewm/eval.py` 保留了 `stable_worldmodel` 的 World/CEM/Policy 评估基础设施（gymnasium 环境相关，不重写），仅替换了模型加载（`load_model` 替代 `swm.wm.utils.load_pretrained`）和配置系统（`yaml.safe_load` 替代 `@hydra.main`）。
