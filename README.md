@@ -1,6 +1,6 @@
 # frontier_model_easy_train
 
-## 项目憧憬
+## 项目目标
 轻松读懂并复现训练多个前沿AI模型
 
 ## 项目模型
