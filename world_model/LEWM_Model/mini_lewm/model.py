@@ -10,12 +10,12 @@ def modulate(x, shift, scale):
     """AdaLN-zero modulation"""
     return x * (1 + scale) + shift
 
+
 class SIGReg(torch.nn.Module):
     """
     Sketch Isotropic Gaussian Regularizer (single-GPU!)
     详细原理和代码实现请参考SIGReg代码.md和SIGReg理论.md
     """
-
 
     def __init__(self, knots=17, num_proj=1024):
         super().__init__()
@@ -40,7 +40,8 @@ class SIGReg(torch.nn.Module):
         x_t = (proj @ A).unsqueeze(-1) * self.t
         err = (x_t.cos().mean(-3) - self.phi).square() + x_t.sin().mean(-3).square()
         statistic = (err @ self.weights) * proj.size(-2)
-        return statistic.mean() # average over projections and time
+        return statistic.mean()  # average over projections and time
+
 
 class FeedForward(nn.Module):
     """FeedForward network used in Transformers"""
@@ -68,7 +69,7 @@ class Attention(nn.Module):
         inner_dim = dim_head * heads
         project_out = not (heads == 1 and dim_head == dim)
         self.heads = heads
-        self.scale = dim_head**-0.5
+        self.scale = dim_head ** -0.5
         self.dropout = dropout
         self.norm = nn.LayerNorm(dim)
         self.attend = nn.Softmax(dim=-1)
@@ -100,9 +101,9 @@ class ConditionalBlock(nn.Module):
 
         self.attn = Attention(dim, heads=heads, dim_head=dim_head, dropout=dropout)
         self.mlp = FeedForward(dim, mlp_dim, dropout=dropout)
-        self.norm1 = nn.LayerNorm(dim, elementwise_affine=False, eps=1e-6)
-        self.norm2 = nn.LayerNorm(dim, elementwise_affine=False, eps=1e-6)
-        self.adaLN_modulation = nn.Sequential(                  # adaLN
+        self.norm1 = nn.LayerNorm(dim, elementwise_affine=False, eps=1e-6)  # 关闭LayerNorm的缩放和偏置
+        self.norm2 = nn.LayerNorm(dim, elementwise_affine=False, eps=1e-6)  # 关闭LayerNorm的缩放和偏置
+        self.adaLN_modulation = nn.Sequential(  # adaLN，由动作（条件）来控制Norm的缩放和偏置
             nn.SiLU(), nn.Linear(dim, 6 * dim, bias=True)
         )
 
@@ -113,8 +114,8 @@ class ConditionalBlock(nn.Module):
         shift_msa, scale_msa, gate_msa, shift_mlp, scale_mlp, gate_mlp = (
             self.adaLN_modulation(c).chunk(6, dim=-1)
         )
-        x = x + gate_msa * self.attn(modulate(self.norm1(x), shift_msa, scale_msa))     # adaLN
-        x = x + gate_mlp * self.mlp(modulate(self.norm2(x), shift_mlp, scale_mlp))      # adaLN
+        x = x + gate_msa * self.attn(modulate(self.norm1(x), shift_msa, scale_msa))  # adaLN，由动作（条件）来控制Norm的缩放和偏置
+        x = x + gate_mlp * self.mlp(modulate(self.norm2(x), shift_mlp, scale_mlp))  # adaLN，由动作（条件）来控制Norm的缩放和偏置
         return x
 
 
@@ -139,16 +140,16 @@ class Transformer(nn.Module):
     """Standard Transformer with support for AdaLN-zero blocks"""
 
     def __init__(
-        self,
-        input_dim,
-        hidden_dim,
-        output_dim,
-        depth,
-        heads,
-        dim_head,
-        mlp_dim,
-        dropout=0.0,
-        block_class=Block,
+            self,
+            input_dim,
+            hidden_dim,
+            output_dim,
+            depth,
+            heads,
+            dim_head,
+            mlp_dim,
+            dropout=0.0,
+            block_class=Block,
     ):
         super().__init__()
         self.norm = nn.LayerNorm(hidden_dim)
@@ -193,13 +194,14 @@ class Transformer(nn.Module):
             x = self.output_proj(x)
         return x
 
+
 class Embedder(nn.Module):
     def __init__(
-        self,
-        input_dim=10,       # 10 模型的输入中，每一步action包含5连续帧的动作，即5*2=10
-        smoothed_dim=10,
-        emb_dim=10,         # 192
-        mlp_scale=4,
+            self,
+            input_dim=10,  # 10 模型的输入中，每一步action包含5连续帧的动作，即5*2=10
+            smoothed_dim=10,
+            emb_dim=10,  # 192
+            mlp_scale=4,
     ):
         super().__init__()
         self.patch_embed = nn.Conv1d(input_dim, smoothed_dim, kernel_size=1, stride=1)
@@ -214,9 +216,9 @@ class Embedder(nn.Module):
         x: (B, T, D)
         """
         x = x.float()
-        x = x.permute(0, 2, 1)      # Conv要求 C,H*W
+        x = x.permute(0, 2, 1)  # Conv要求 C,H*W
         x = self.patch_embed(x)
-        x = x.permute(0, 2, 1)      # linear要求 H*W,C
+        x = x.permute(0, 2, 1)  # linear要求 H*W,C
         x = self.embed(x)
         return x
 
@@ -225,12 +227,12 @@ class MLP(nn.Module):
     """Simple MLP with optional normalization and activation"""
 
     def __init__(
-        self,
-        input_dim,
-        hidden_dim,
-        output_dim=None,
-        norm_fn=nn.LayerNorm,
-        act_fn=nn.GELU,
+            self,
+            input_dim,
+            hidden_dim,
+            output_dim=None,
+            norm_fn=nn.LayerNorm,
+            act_fn=nn.GELU,
     ):
         super().__init__()
         norm_fn = norm_fn(hidden_dim) if norm_fn is not None else nn.Identity()
@@ -252,21 +254,21 @@ class ARPredictor(nn.Module):
     """Autoregressive predictor for next-step embedding prediction."""
 
     def __init__(
-        self,
-        *,
-        num_frames,                 # 3
-        depth,                      # 6
-        heads,                      # 16
-        mlp_dim,                    # 2048
-        input_dim,                  # 192
-        hidden_dim,                 # 192
-        output_dim=None,            # 192
-        dim_head=64,                # 64
-        dropout=0.0,                # 0.1
-        emb_dropout=0.0,            # 0.0
+            self,
+            *,
+            num_frames,  # 3
+            depth,  # 6
+            heads,  # 16
+            mlp_dim,  # 2048
+            input_dim,  # 192
+            hidden_dim,  # 192
+            output_dim=None,  # 192
+            dim_head=64,  # 64
+            dropout=0.0,  # 0.1
+            emb_dropout=0.0,  # 0.0
     ):
         super().__init__()
-        self.pos_embedding = nn.Parameter(torch.randn(1, num_frames, input_dim))    # [1,3,192] 模型的输入仅3步
+        self.pos_embedding = nn.Parameter(torch.randn(1, num_frames, input_dim))  # [1,3,192] 模型的输入仅3步
         self.dropout = nn.Dropout(emb_dropout)
         self.transformer = Transformer(
             input_dim,
@@ -297,15 +299,16 @@ class ARPredictor(nn.Module):
 def detach_clone(v):
     return v.detach().clone() if torch.is_tensor(v) else v
 
+
 class JEPA(nn.Module):
 
     def __init__(
-        self,
-        encoder,
-        predictor,
-        action_encoder,
-        projector=None,
-        pred_proj=None,
+            self,
+            encoder,
+            predictor,
+            action_encoder,
+            projector=None,
+            pred_proj=None,
     ):
         super().__init__()
 
@@ -322,7 +325,7 @@ class JEPA(nn.Module):
 
         pixels = info['pixels'].float()
         b = pixels.size(0)
-        pixels = rearrange(pixels, "b t ... -> (b t) ...") # flatten for encoding
+        pixels = rearrange(pixels, "b t ... -> (b t) ...")  # flatten for encoding
         output = self.encoder(pixels, interpolate_pos_encoding=True)
         pixels_emb = output.last_hidden_state[:, 0]  # cls token
         emb = self.projector(pixels_emb)
@@ -382,7 +385,7 @@ class JEPA(nn.Module):
             pred_emb = self.predict(emb_trunc, act_trunc)[:, -1:]  # (BS, 1, D)
             emb = torch.cat([emb, pred_emb], dim=1)  # (BS, T+1, D)
 
-            next_act = act_future[:, t : t + 1, :]  # (BS, 1, action_dim)
+            next_act = act_future[:, t: t + 1, :]  # (BS, 1, action_dim)
             act = torch.cat([act, next_act], dim=1)  # (BS, T+1, action_dim)
 
         # predict the last state
@@ -429,7 +432,7 @@ class JEPA(nn.Module):
 
         for k in info_dict:
             if k.startswith("goal_"):
-                goal[k[len("goal_") :]] = goal.pop(k)
+                goal[k[len("goal_"):]] = goal.pop(k)
 
         goal.pop("action")
         goal = self.encode(goal)
@@ -470,9 +473,9 @@ def create_encoder(size="tiny", patch_size=14, image_size=224, pretrained=False)
 
     # ViT size -> hidden_size / num_layers / num_heads 映射
     SIZE_MAP = {
-        "tiny":  (192, 12, 3),
+        "tiny": (192, 12, 3),
         "small": (384, 12, 6),
-        "base":  (768, 12, 12),
+        "base": (768, 12, 12),
         "large": (1024, 24, 16),
     }
     hidden, layers, heads = SIZE_MAP[size]
@@ -484,8 +487,8 @@ def create_encoder(size="tiny", patch_size=14, image_size=224, pretrained=False)
         intermediate_size=hidden * 4,
         patch_size=patch_size,
         image_size=image_size,
-        add_pooling_layer=False,         # 不需要分类头
-        interpolate_pos_encoding=True,    # 允许非标准分辨率（评估时可能不是 224x224）
+        add_pooling_layer=False,  # 不需要分类头
+        interpolate_pos_encoding=True,  # 允许非标准分辨率（评估时可能不是 224x224）
     )
 
     if pretrained:
