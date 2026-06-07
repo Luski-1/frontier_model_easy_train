@@ -60,14 +60,14 @@ class HDF5Dataset(Dataset):
         self._cache: dict[str, np.ndarray] = {}
 
         with self._open_h5() as f:
-            # ep_len 每回合的总帧数 [B]
-            # ep_offset 每回合在总数据中的起始索引（绝对位置） [B]
+            # ep_len 每个回合的总帧数 [B1]
+            # ep_offset 每个回合在所有数据中的起始索引（绝对位置） [B1]
             lengths, offsets = f['ep_len'][:], f['ep_offset'][:]
             # [pixels, action, proprio, state]
-            # pixels RGB图像 [B,224,224,3]
-            # action [B,2] dim 1是代表动作的x,y轴
-            # proprio 可能是机器人本体状态 [B,4]
-            # state 环境状态 [B,7]
+            # pixels RGB图像 [B2,224,224,3]
+            # action [B2,2] dim 1是代表动作的x,y轴
+            # proprio 可能是机器人本体状态 [B2,4]
+            # state 环境状态 [B2,7]
             self._keys = keys_to_load or [
                 k for k in f.keys() if k not in ('ep_len', 'ep_offset')
             ]
@@ -128,7 +128,7 @@ class HDF5Dataset(Dataset):
         """
         # 确保self.h5_file不为空
         self._open()
-        # 回合的起始索引（绝对位置）+回合的相对索引（相对位置） > 特定片段的真实起始位置和真实结束位置
+        # 这个区间的起始索引（绝对位置）+回合的相对索引（相对位置） > 特定片段的真实起始位置和真实结束位置
         g_start, g_end = (
             self.offsets[ep_idx] + start,
             self.offsets[ep_idx] + end,
