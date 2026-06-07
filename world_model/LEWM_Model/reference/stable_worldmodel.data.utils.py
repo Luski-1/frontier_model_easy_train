@@ -90,15 +90,17 @@ def load_dataset(
     if format is not None:
         return get_format(format).open_reader(path, **kwargs)
     # 简单描述：
-    # fmt就是stable_worldmode.data.formats.hdf5.py中HDF5Dataset类，以及对应的父类是stable_worldmode.data.dataset.py中Dataset类
+    # fmt就是stable_worldmode.data.formats.hdf5.py中HDF5类
+    # 使用open_reader方法获得stable_worldmode.data.formats.hdf5.py中HDF5Dataset类，以及对应的父类是stable_worldmode.data.dataset.py中Dataset类
     # kwarg = {
     # transform=None，num_steps=4, frameskip=5, name=pusht_expert_train.h5,
     # keys_to_load=["pixels", "action", "proprio", "state"], keys_to_cache["action", "proprio", "state"]}
 
     # 获取逻辑（建议不看）
-    # 1. 导入stable_worldmodel时触发对应目录的__init__.py，进行一系列的__init__.py层层导入，最终导入多种以Format为父类的数据类型检测器（能够检测文件是什么类型后缀）
+    # 1. 导入stable_worldmodel时触发对应目录的__init__.py，进行一系列的__init__.py层层导入，
+    #   最终导入多种以Format为父类的数据类型检测器（能够检测文件是什么类型后缀），例如stable_worldmode.data.formats.hdf5.py中HDF5Dataset类
     # 2. 数据类型检测器有register_format作为装饰器，自动为FORMATS字典插入k(类名): v(类对象)
-    # 3. 某个数据类型检测器的检测结果为True，返回对应的Dataset
+    # 3. 某个数据类型检测器的detect方法检测结果为True，执行对应的open_reader返回对应的Dataset对象
     fmt = detect_format(path)
     if fmt is None:
         raise ValueError(
