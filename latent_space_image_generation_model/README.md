@@ -44,5 +44,5 @@ VAE_Model/
 ## 参考资料
 1. VAE文献：https://arxiv.org/abs/1312.6114
 2. VAE模型理论讲解视频的推荐👍：https://www.bilibili.com/video/BV1op421S7Ep/?spm_id_from=333.1387.search.video_card.click
-3. VAE模型理论讲解视频的推荐👍：https://www.bilibili.com/video/BV1xFxMz1EMS/?spm_id_from=333.1387.search.video_card.click
+3. VAE模型理论讲解视频的推荐👍👍👍：https://www.bilibili.com/video/BV1xFxMz1EMS/?spm_id_from=333.1387.search.video_card.click
 
