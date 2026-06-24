@@ -324,7 +324,7 @@ class ConvVAE(nn.Module):
         with torch.amp.autocast("cuda", dtype=torch.float32):
 
             # 在训练VAE期间，如果采取VAE默认代码（logvar = self.fc_scale(h)），那么最难处理的就是隐变量方差💥
-            # 假设如果raw_scale直接=log σ^2，模型训练初期输出值范围偏大，很容易就导致σ^2 = exp(log σ^2) = ∞
+            # 假设如果raw_scale直接=log σ^2，模型训练初期输出值范围偏大，很容易就导致σ^2 = exp(log σ^2) = ∞ 或者 0
             raw_scale = self.fc_scale(h)  # 无界，log σ^2可以是任意实数
 
             # 经过多次尝试，调整为以下方差限制
