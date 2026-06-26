@@ -30,11 +30,11 @@ class SinusoidalPosEmb(nn.Module):
 
 # ---------- Enhanced UNet with Residual Blocks + Attention ----------
 class ResidualBlock(nn.Module):
-    def __init__(self, in_ch, out_ch, time_emb_dim, dropout=0.1):
+    def __init__(self, in_ch, out_ch, time_emb_dim, group_num=16, dropout=0.1):
         super().__init__()
 
         self.conv1 = nn.Sequential(
-            nn.GroupNorm(8, in_ch),                                 # 归一化
+            nn.GroupNorm(group_num, in_ch),                                 # 归一化
             nn.SiLU(),                                              # 激活
             nn.Conv2d(in_ch, out_ch, kernel_size=3, padding=1)      # 卷积
         )
@@ -45,7 +45,7 @@ class ResidualBlock(nn.Module):
         )
 
         self.conv2 = nn.Sequential(
-            nn.GroupNorm(8, out_ch),                                # 归一化
+            nn.GroupNorm(group_num, out_ch),                                # 归一化
             nn.SiLU(),                                              # 激活
             nn.Dropout(dropout),                                    # 正则化
             nn.Conv2d(out_ch, out_ch, kernel_size=3, padding=1)     # 卷积
@@ -76,11 +76,11 @@ class SelfAttention2D(nn.Module):
         h = self.norm(x)
         qkv = self.qkv(h)
         q, k, v = qkv.chunk(3, dim=1)
-
+        # 以H*W作为tokens，channel作为hidden_dim，num_heads=4，C//num_heads = head_dim
         q = q.view(B, self.num_heads, C // self.num_heads, H * W)
         k = k.view(B, self.num_heads, C // self.num_heads, H * W)
         v = v.view(B, self.num_heads, C // self.num_heads, H * W)
-
+        # 常见的缩放点积注意力计算
         attn = torch.softmax(torch.matmul(q.transpose(-2, -1), k) / math.sqrt(C // self.num_heads), dim=-1)
         out = torch.matmul(attn, v.transpose(-2, -1)).transpose(-2, -1)
         out = out.contiguous().view(B, C, H, W)
@@ -100,7 +100,7 @@ class DownBlock(nn.Module):
         """
         super().__init__()
         self.blocks = nn.ModuleList([
-            ResidualBlock(in_ch if i == 0 else out_ch, out_ch, time_emb_dim)
+            ResidualBlock(in_ch if i == 0 else out_ch, out_ch, time_emb_dim)    # 首个ResidualBlock的输入通道是in_ch，后续的输入通道都是out_ch
             for i in range(num_blocks)
         ])
         self.attn = SelfAttention2D(out_ch) if use_attention else nn.Identity()
@@ -111,28 +111,32 @@ class DownBlock(nn.Module):
         for block in self.blocks:       # 收集每个残差块的输出
             x = block(x, t_emb)
             skips.append(x)
-        x = self.attn(x)
-        x = self.downsample(x)
+        x = self.attn(x)                # 简化，不收集
+        x = self.downsample(x)          # 简化，不收集
         return x, skips
 
 
 class UpBlock(nn.Module):
-    def __init__(self, in_ch, out_ch, time_emb_dim, num_blocks=2, upsample=True, use_attention=False):
+    def __init__(self, in_ch, out_ch, skip_chs, time_emb_dim, num_blocks=3, upsample=True, use_attention=False):
         super().__init__()
-        self.upsample = nn.ConvTranspose2d(in_ch, out_ch, kernel_size=4, stride=2, padding=1) if upsample else nn.Identity()
-        self.blocks = nn.ModuleList([
-            ResidualBlock(in_ch + out_ch, out_ch, time_emb_dim)     # in_ch是当前层的x输入，out_ch是对应的下采样层的输出
-            for _ in range(num_blocks)
-        ])
+
+        self.blocks = nn.ModuleList()
+        prev_out_ch = in_ch
+        for i in range(num_blocks):
+            block_in = prev_out_ch + skip_chs[i]
+            # 第0个Residual Block接收上一层的输出以及对应DownBlock的对应Residual Block
+            # 其余Residual Block接收上一个Residual Block(out_ch通道数的输出)以及对应DownBlock的对应Residual Block
+            self.blocks.append(ResidualBlock(block_in, out_ch, time_emb_dim))   
+            prev_out_ch = out_ch
         self.attn = SelfAttention2D(out_ch) if use_attention else nn.Identity()
+        self.upsample = nn.ConvTranspose2d(out_ch, out_ch, kernel_size=4, stride=2, padding=1) if upsample else nn.Identity()   # 不改变channel
 
     def forward(self, x, skips, t_emb):
-        x = self.upsample(x)                                # 先上采样
         for block in self.blocks:
-            if skips:
-                x = torch.cat([x, skips.pop()], dim=1)
+            x = torch.cat([x, skips.pop()], dim=1)
             x = block(x, t_emb)
         x = self.attn(x)
+        x = self.upsample(x)
         return x
 
 
@@ -154,12 +158,13 @@ class MidBlock(nn.Module):
 
 # ---------- Full Enhanced UNet with Attention ----------
 class EnhancedUNet(nn.Module):
-    def __init__(self, in_ch=3, base_ch=128, time_emb_dim=512, num_res_blocks=2):
+    def __init__(self, in_ch=3, base_ch=128, time_emb_dim=512, num_res_blocks=2, group_num=16):
         """
         in_ch: 输入图像的通道数
         base_ch: 转换后的基础通道数
         time_emb_dim: sigma参数的dim
         num_res_blocks: 每一层残差模块的数量
+        group_num: 组归一化的channel分组数
         """
         super().__init__()
         # sigma模块
@@ -170,7 +175,7 @@ class EnhancedUNet(nn.Module):
             nn.Linear(time_emb_dim, time_emb_dim)
         )
         # 图像初始转换模块
-        self.init_conv = nn.Conv2d(in_ch, base_ch, kernel_size=3, padding=1)
+        self.init_conv = nn.Conv2d(in_ch, base_ch, kernel_size=3, padding=1)    # 初始卷积，将图像channel转换为base channel
 
         # 下采样模块
         self.down1 = DownBlock(base_ch, base_ch, time_emb_dim, num_res_blocks, downsample=False, use_attention=False)
@@ -182,14 +187,14 @@ class EnhancedUNet(nn.Module):
         self.mid = MidBlock(base_ch * 8, time_emb_dim, num_res_blocks * 2)
 
         # 上采样模块
-        self.up4 = UpBlock(base_ch * 8, base_ch * 4, time_emb_dim, num_res_blocks, upsample=True, use_attention=True)
-        self.up3 = UpBlock(base_ch * 4, base_ch * 2, time_emb_dim, num_res_blocks, upsample=True, use_attention=True)
-        self.up2 = UpBlock(base_ch * 2, base_ch, time_emb_dim, num_res_blocks, upsample=True, use_attention=False)
-        self.up1 = UpBlock(base_ch, base_ch, time_emb_dim, num_res_blocks, upsample=False, use_attention=False)
+        self.up4 = UpBlock(base_ch * 8, base_ch * 4,    skip_chs=[base_ch * 8] * 2, time_emb_dim=time_emb_dim, num_blocks=2, upsample=True, use_attention=True)
+        self.up3 = UpBlock(base_ch * 4, base_ch * 2,    skip_chs=[base_ch * 4] * 2, time_emb_dim=time_emb_dim, num_blocks=2, upsample=True, use_attention=True)
+        self.up2 = UpBlock(base_ch * 2, base_ch,        skip_chs=[base_ch * 2] * 2, time_emb_dim=time_emb_dim, num_blocks=2, upsample=True, use_attention=False)
+        self.up1 = UpBlock(base_ch,     base_ch,        skip_chs=[base_ch] * 3,     time_emb_dim=time_emb_dim, num_blocks=3, upsample=False, use_attention=False)
 
         # 最终转换模块
-        self.final = nn.Sequential(
-            nn.GroupNorm(8, base_ch),
+        self.final = nn.Sequential(                         # 最终卷积，将base channel转换为图像channel
+            nn.GroupNorm(group_num, base_ch),
             nn.SiLU(),
             nn.Conv2d(base_ch, in_ch, kernel_size=3, padding=1)
         )
@@ -198,7 +203,7 @@ class EnhancedUNet(nn.Module):
         t_emb = self.sigma_mlp(t)
         x = self.init_conv(x)
 
-        skips = []
+        skips = [x]
         x, s1 = self.down1(x, t_emb)
         skips.extend(s1)
         x, s2 = self.down2(x, t_emb)
