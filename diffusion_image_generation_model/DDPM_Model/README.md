@@ -19,7 +19,7 @@ DDPM_Model
         dataset = datasets.CelebA(
             root="./data",
             split="all",
-            download=True,  # 关键：自动下载
+            download=True,
             target_type=["attr", "identity"]
         )   
         ```
@@ -60,7 +60,7 @@ DDPM_Model/
 │       └── train_cifar.py           
 │
 └── train_result/                    # [训练结果]
-    └── epoch300.0_ema.png           #
+    └── epoch300.0_ema.png           
 ```
 
 ## 参考资料
