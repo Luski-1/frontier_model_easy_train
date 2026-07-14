@@ -24,7 +24,7 @@ NCSN_Model
             target_type=["attr", "identity"]
         )
 
-        dataset = MNIST(
+        dataset = datasets.MNIST(
             root='./data',
             split="all",
             download=True,
