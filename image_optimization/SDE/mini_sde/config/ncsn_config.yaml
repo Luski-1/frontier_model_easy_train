@@ -1,0 +1,46 @@
+training:
+  per_device_batch_size: 128
+  n_iters: 1300001
+  likelihood_weighting: false
+  sde: vesde                  # NCSN选择vesde
+
+sampling:
+  n_steps_each: 1
+  noise_removal: true
+  probability_flow: false
+  snr: 0.16                   # NCSN才有用
+  method: pc                  # 可以选择ode求解方式
+  predictor: reverse_diffusion   # NCSN选择reverse_diffusion
+  corrector: langevin             # NCSN选择langevin
+  eps: 1e-5                   # NCSN选择1e-5
+
+data:
+  dataset_path: /workspace/data/CIFAR-10/data
+  uniform_dequantization: false # 图像是否开启连续化，暂时没传递进去
+  image_size: 32
+  random_flip: true           # 图像是否开启水平翻转
+  num_channels: 3             # 图像的channel数量
+
+model:
+  sigma_min: 0.01             # NCSN的σ最小值
+  sigma_max: 50               # NCSN的σ最大值
+  num_scales: 1000            # 离散步数
+  beta_min: 0.1               # DDPM的β_bar最小值
+  beta_max: 20.0              # DDPM的β_bar最大值
+  dropout: 0.1                # 模型dropout率，暂时没传递进去
+  ema_rate: 0.9999            # EMA更新步长
+  nf: 128                     # 模型的基础channel
+  ch_mult: [1, 2, 4, 4]       # 模型的channel倍数，暂时没传递进去
+  num_res_blocks: 3           # 模型每一层多少个残差块
+  attn_resolutions: [16]      # 执行Attention的图像分辨率，暂时没传递进去            
+
+optim:
+  weight_decay: 0.1
+  optimizer: AdamW
+  lr: 2.0e-4
+  beta1: 0.9
+  eps: 1.0e-8
+  warmup: 5000                # warmup的阶段
+  grad_clip: 1.0              # 梯度裁剪
+
+seed: 42
