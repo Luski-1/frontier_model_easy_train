@@ -3,8 +3,8 @@
 ## 项目目标
 轻松读懂并复现训练多个前沿AI图像模型
 
-## 最新复现结果
-![解码结果](./diffusion_text_generation_model/MDLM_Model/train_result/step124000_default.gif)
+## 最新结果
+![MDLM](./diffusion_text_generation_model/MDLM_Model/train_result/step124000_default.gif)
 
 ## 项目模型
 | 模型名称 | 类型 | 年份 | 原项目<br>增加详细注释 | 精简化重写<br>(支持训练，含注释) | 训练结果 |
