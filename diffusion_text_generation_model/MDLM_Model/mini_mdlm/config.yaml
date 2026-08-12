@@ -1,0 +1,53 @@
+time_conditioning: False  # 模型是否时间依赖
+T: 0  # 0 (continuous time) / 1000 
+
+seed: 42
+
+data:
+  dataset_path: /workspace/data/miniPile
+  text_column: text
+  packed_dataset_path: /workspace/data/miniPile_packed              # 处理后的数据集地址
+  tokenizer_name_or_path: /workspace/data/bert-base-uncased
+
+
+loader:
+  num_workers: 4
+  pin_memory: True
+
+sample:
+  per_device_batch_size: 1
+  predictor: ddpm_cache  # analytic, ddpm, ddpm_cache | analytic是score matching的方式
+  steps: 128          # 完整解码需要的次数
+  noise_removal: True # 开启最后一步的再次去噪
+  semi_ar: True         # 是否开启自回归
+  stride_length: 128    # 自回归的步长
+  num_strides: 4        # 自回归额外执行多少步，设置model.length的长度 // stride_length
+  sample_dir: ./samples
+
+train:
+  antithetic_sampling: True     # 偏移时间t
+  importance_sampling: False    # 时间t的重要性采样
+  sampling_eps: 1.0e-3
+  per_device_batch_size: 64
+  gradient_clip: 1.0
+  train_steps: 500_000
+  log_steps: 5000
+  lr_scheduler: constant_with_warmup
+  wramup_step: 2500
+  precision: 'bf16'
+  checkpoint_dir: ./checkpoints
+
+model:
+  hidden_size: 768
+  cond_dim: 128
+  length: 1024            # 模型接受的文本长度
+  n_blocks: 12            # Dit层数
+  n_heads: 12
+  dropout: 0.1
+
+optim:
+  weight_decay: 0
+  lr: 3.0e-4
+  beta1: 0.9
+  beta2: 0.999
+  eps: 1.0e-8
